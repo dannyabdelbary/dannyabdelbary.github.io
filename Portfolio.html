@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My UX Design Portfolio</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;  /* Navy blue */
+            --secondary-color: #3498db; /* Light blue */
+            --accent-color: #e74c3c;   /* Red */
+            --light-bg: #f8f9fa;       /* Light gray */
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: #333;
+        }
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        .navbar {
+            background-color: var(--primary-color);
+        }
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+        .hero {
+            background-color: var(--light-bg);
+            padding: 5rem 0;
+        }
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+        .case-study-card {
+            transition: transform 0.3s;
+            margin-bottom: 2rem;
+        }
+        .case-study-card:hover {
+            transform: translateY(-5px);
+        }
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">My UX Portfolio</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#work">How I Work</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#case-studies">Case Studies</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero text-center">
+        <div class="container">
+            <h1>Hi, I'm Danny Abdel Bary</h1>
+            <p class="lead">UX/UI Designer | Problem Solver | Creative Thinker</p>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center">About Me</h2>
+            <div class="row align-items-center">
+                <div class="col-lg-8 mx-auto">
+                    <p>I'm a passionate Software Engineering student with a background in Quality Assurance Testing. I love solving user problems through thoughtful design and enjoy making games.</p>
+                    <p>My goal is to create intuitive, accessible, and visually appealing digital experiences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How I Work Section -->
+    <section id="work" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center">How I Work</h2>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <p>I follow a <strong>user-centered design</strong> approach, focusing on research, iteration, and usability testing.</p>
+                    <p>Currently, I'm enhancing my skills through the <a href="#" target="_blank">UI Design Course</a> at the University of Ottawa. I'm learning key concepts like:</p>
+                    <ul>
+                        <li>Heuristic Evaluation</li>
+                        <li>Wireframing & Prototyping</li>
+                        <li>Visual Hierarchy & Contrast</li>
+                    </ul>
+                    <p>Check out my learning resources: <a href="https://www.nngroup.com/" target="_blank">NN/g</a>, <a href="#" target="_blank">Course Materials</a>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Case Studies Section -->
+    <section id="case-studies" class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center">Case Studies</h2>
+            <div class="row">
+                <!-- Case Study 1 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card case-study-card">
+                        <img src="https://via.placeholder.com/300x200?text=Dentist+Service" class="card-img-top" alt="Service Site">
+                        <div class="card-body">
+                            <h5 class="card-title">Service Site (Dentist)</h5>
+                            <p class="card-text">Coming Soon</p>
+                            <a href="#" class="btn btn-primary disabled">View Project</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Case Study 2 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card case-study-card">
+                        <img src="https://via.placeholder.com/300x200?text=Small+Game" class="card-img-top" alt="Small Game">
+                        <div class="card-body">
+                            <h5 class="card-title">Small Game</h5>
+                            <p class="card-text">Coming Soon</p>
+                            <a href="#" class="btn btn-primary disabled">View Project</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Case Study 3 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card case-study-card">
+                        <img src="https://via.placeholder.com/300x200?text=E-commerce" class="card-img-top" alt="E-commerce">
+                        <div class="card-body">
+                            <h5 class="card-title">E-commerce Site</h5>
+                            <p class="card-text">Coming Soon</p>
+                            <a href="#" class="btn btn-primary disabled">View Project</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Case Study 4 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card case-study-card">
+                        <img src="https://via.placeholder.com/300x200?text=Analytics+Dashboard" class="card-img-top" alt="Analytics">
+                        <div class="card-body">
+                            <h5 class="card-title">Analytics Dashboard</h5>
+                            <p class="card-text">Coming Soon</p>
+                            <a href="#" class="btn btn-primary disabled">View Project</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p>&copy; 2025 Danny Abdel Bary. All rights reserved.</p>
+            <p>Contact: <a href="mailto:dabde086@uottawa.ca" class="text-white">dabde086@uottawa.ca</a></p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
