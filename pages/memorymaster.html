@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Master: Cognitive Challenge</title>
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            text-align: center;
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+
+        /* Setup Screen */
+        .setup-screen {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        /* Game Board */
+        .game-board {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .cards-container {
+            display: grid;
+            gap: 10px;
+            margin: 0 auto;
+        }
+
+        /* Card Styles */
+        .card {
+            aspect-ratio: 1;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card.solved .card-front {
+            background-color: #2ecc71;
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-front {
+            background-color: #3498db;
+            transform: rotateY(180deg);
+        }
+
+        .card-front img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+
+        .card-back {
+            background-color: #34495e;
+        }
+
+        /* Game Over */
+        .game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            display: none;
+        }
+
+        .game-over-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        /* Accessibility */
+        .card:focus {
+            outline: 3px solid #e74c3c;
+        }
+
+        @media (max-width: 600px) {
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .cards-container {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Memory Master</h1>
+    <p>A cognitive challenge game testing your memory skills</p>
+
+    <div class="setup-screen" id="setupScreen">
+        <h2 id="gameTitle">Memory Master</h2>
+        <h3>Select Difficulty:</h3>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="level" value="easy" checked>
+                Easy (4x4)
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="level" value="medium">
+                Medium (6x4)
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="level" value="hard">
+                Hard (6x6)
+            </label>
+        </div>
+
+        <h3>Select Theme:</h3>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="theme" value="nature" checked>
+                Nature
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="theme" value="abstract">
+                Abstract
+            </label>
+        </div>
+
+        <button id="startButton">Start Game</button>
+    </div>
+
+    <div class="game-board" id="gameBoard">
+        <div class="game-info">
+            <div>Time: <span id="timer">0</span>s</div>
+            <div>Moves: <span id="moves">0</span></div>
+            <div>Matched: <span id="matched">0</span>/<span id="totalPairs">8</span></div>
+        </div>
+        
+        <div class="cards-container" id="cardsContainer"></div>
+    </div>
+
+    <div class="game-over" id="gameOver">
+        <div class="game-over-content">
+            <h2>Congratulations!</h2>
+            <p>You completed the game in <span id="finalTime">0</span> seconds with <span id="finalMoves">0</span> moves!</p>
+            <p>Your score: <span id="finalScore">0</span></p>
+            <button id="playAgainButton">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let cards = [];
+        let flipped = [];
+        let solved = [];
+        let moves = 0;
+        let timer = 0;
+        let timerInterval;
+        let currentLevel = 'easy';
+        let currentTheme = 'nature';
+
+        // DOM elements
+        const setupScreen = document.getElementById('setupScreen');
+        const gameBoard = document.getElementById('gameBoard');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const gameOver = document.getElementById('gameOver');
+        const startButton = document.getElementById('startButton');
+        const playAgainButton = document.getElementById('playAgainButton');
+        const timerDisplay = document.getElementById('timer');
+        const movesDisplay = document.getElementById('moves');
+        const matchedDisplay = document.getElementById('matched');
+        const totalPairsDisplay = document.getElementById('totalPairs');
+        const finalTimeDisplay = document.getElementById('finalTime');
+        const finalMovesDisplay = document.getElementById('finalMoves');
+        const finalScoreDisplay = document.getElementById('finalScore');
+        const gameTitle = document.getElementById('gameTitle');
+
+        // Difficulty settings
+        const levelSettings = {
+            easy: { pairs: 8, columns: 4 },
+            medium: { pairs: 12, columns: 6 },
+            hard: { pairs: 18, columns: 6 }
+        };
+
+        // Image sets (in a real app, you would use actual image files)
+        const imageSets = {
+            nature: [
+                '🌲', '🌳', '🌴', '🌵', '🌷', '🌸', '🌹', '🍀', '🍁', '🍂',
+                '🍃', '🌾', '🌿', '☘️', '🌱', '🌼', '🌻', '🌺'
+            ],
+            abstract: [
+                '🔶', '🔷', '🔸', '🔹', '🔺', '🔻', '🟠', '🟡', '🟢', '🔵',
+                '🟣', '🟤', '⚫', '⚪', '🟥', '🟧', '🟨', '🟩'
+            ]
+        };
+
+        // Event listeners
+        startButton.addEventListener('click', startGame);
+        playAgainButton.addEventListener('click', resetGame);
+
+        // Initialize game
+        function startGame() {
+            // Get selected options
+            currentLevel = document.querySelector('input[name="level"]:checked').value;
+            currentTheme = document.querySelector('input[name="theme"]:checked').value;
+            
+            // Initialize game state
+            flipped = [];
+            solved = [];
+            moves = 0;
+            timer = 0;
+            
+            // Update UI
+            setupScreen.style.display = 'none';
+            gameBoard.style.display = 'block';
+            timerDisplay.textContent = '0';
+            movesDisplay.textContent = '0';
+            
+            const { pairs } = levelSettings[currentLevel];
+            totalPairsDisplay.textContent = pairs;
+            matchedDisplay.textContent = '0';
+            
+            // Create cards
+            createCards();
+            
+            // Start timer
+            timerInterval = setInterval(() => {
+                timer++;
+                timerDisplay.textContent = timer;
+            }, 1000);
+        }
+
+        function createCards() {
+            cardsContainer.innerHTML = '';
+            const { pairs, columns } = levelSettings[currentLevel];
+            
+            // Set grid columns
+            cardsContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+            
+            // Create card pairs
+            const cardValues = [];
+            for (let i = 0; i < pairs; i++) {
+                cardValues.push(i % (pairs / 2));
+            }
+            
+            // Shuffle cards
+            const shuffledCards = [...cardValues, ...cardValues]
+                .sort(() => Math.random() - 0.5);
+            
+            // Create card elements
+            shuffledCards.forEach((value, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = index;
+                card.dataset.value = value;
+                card.tabIndex = 0;
+                
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">${imageSets[currentTheme][value]}</div>
+                        <div class="card-back"></div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => handleCardClick(index));
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        handleCardClick(index);
+                    }
+                });
+                
+                cardsContainer.appendChild(card);
+            });
+            
+            cards = shuffledCards;
+        }
+
+        function handleCardClick(index) {
+            // Don't allow flipping if already flipped or solved
+            if (flipped.includes(index) || solved.includes(index) || flipped.length === 2) {
+                return;
+            }
+            
+            // Flip the card
+            const card = cardsContainer.children[index];
+            card.classList.add('flipped');
+            
+            // Add to flipped cards
+            flipped.push(index);
+            
+            // Check for match if two cards are flipped
+            if (flipped.length === 2) {
+                moves++;
+                movesDisplay.textContent = moves;
+                
+                const [firstIndex, secondIndex] = flipped;
+                const firstValue = cards[firstIndex];
+                const secondValue = cards[secondIndex];
+                
+                if (firstValue === secondValue) {
+                    // Match found
+                    solved.push(...flipped);
+                    matchedDisplay.textContent = solved.length / 2;
+                    
+                    // Mark cards as solved
+                    flipped.forEach(i => {
+                        cardsContainer.children[i].classList.add('solved');
+                    });
+                    
+                    flipped = [];
+                    
+                    // Check if game is complete
+                    if (solved.length === levelSettings[currentLevel].pairs * 2) {
+                        endGame();
+                    }
+                } else {
+                    // No match - flip back after delay
+                    setTimeout(() => {
+                        flipped.forEach(i => {
+                            cardsContainer.children[i].classList.remove('flipped');
+                        });
+                        flipped = [];
+                    }, 1000);
+                }
+            }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            
+            // Calculate score
+            const { pairs } = levelSettings[currentLevel];
+            const baseScore = pairs * 100;
+            const timePenalty = Math.min(timer * 5, 500);
+            const movePenalty = Math.min(moves * 2, 300);
+            const finalScore = baseScore - timePenalty - movePenalty;
+            
+            // Update game over screen
+            finalTimeDisplay.textContent = timer;
+            finalMovesDisplay.textContent = moves;
+            finalScoreDisplay.textContent = finalScore;
+            
+            // Show game over screen
+            gameOver.style.display = 'flex';
+        }
+
+        function resetGame() {
+            // Hide game over screen
+            gameOver.style.display = 'none';
+            
+            // Show setup screen
+            gameBoard.style.display = 'none';
+            setupScreen.style.display = 'block';
+            gameTitle.textContent = 'Play Again!';
+        }
+    </script>
+</body>
+</html>
