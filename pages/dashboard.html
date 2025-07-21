@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Price Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0;
+      color: #2c3e50;
+    }
+    .language-toggle {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .charts-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .chart {
+      flex: 1;
+      min-width: 300px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .chart-title {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+    select, input {
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Sample data
+    const foodData = {
+      years: [2019, 2020, 2021, 2022, 2023],
+      items: {
+        tomatoes: [2.5, 2.7, 2.8, 3.0, 3.2],
+        broccoli: [1.8, 1.9, 2.0, 2.2, 2.3],
+        cucumbers: [1.5, 1.6, 1.7, 1.8, 2.0]
+      }
+    };
+
+    // Translations
+    const translations = {
+      en: {
+        title: "Food Price Dashboard",
+        lineTitle: "Price Trend Over Time",
+        barTitle: "Price Comparison by Year",
+        selectItem: "Select Food Item",
+        selectYear: "Select Year",
+        toggleLanguage: "Français"
+      },
+      fr: {
+        title: "Tableau de Bord des Prix Alimentaires",
+        lineTitle: "Tendance des Prix dans le Temps",
+        barTitle: "Comparaison des Prix par Année",
+        selectItem: "Sélectionner un Aliment",
+        selectYear: "Sélectionner une Année",
+        toggleLanguage: "English"
+      }
+    };
+
+    function App() {
+      const [language, setLanguage] = useState('en');
+      const [selectedItem, setSelectedItem] = useState('tomatoes');
+      const [selectedYear, setSelectedYear] = useState(2023);
+      const lineChartRef = useRef(null);
+      const barChartRef = useRef(null);
+
+      const t = translations[language];
+
+      useEffect(() => {
+        // Destroy old charts if they exist
+        if (lineChartRef.current) {
+          lineChartRef.current.destroy();
+        }
+        if (barChartRef.current) {
+          barChartRef.current.destroy();
+        }
+
+        // Line Chart
+        const lineCtx = document.getElementById('lineChart').getContext('2d');
+        lineChartRef.current = new Chart(lineCtx, {
+          type: 'line',
+          data: {
+            labels: foodData.years,
+            datasets: [{
+              label: selectedItem,
+              data: foodData.items[selectedItem],
+              borderColor: '#3498db',
+              tension: 0.1
+            }]
+          }
+        });
+
+        // Bar Chart
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        barChartRef.current = new Chart(barCtx, {
+          type: 'bar',
+          data: {
+            labels: Object.keys(foodData.items),
+            datasets: [{
+              label: `Prices in ${selectedYear}`,
+              data: Object.values(foodData.items).map(item => 
+                item[foodData.years.indexOf(selectedYear)]
+              ),
+              backgroundColor: ['#e74c3c', '#2ecc71', '#f39c12']
+            }]
+          }
+        });
+      }, [selectedItem, selectedYear]);
+
+      return (
+        <div className="dashboard">
+          <div className="header">
+            <h1>{t.title}</h1>
+            <button 
+              className="language-toggle"
+              onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
+            >
+              {t.toggleLanguage}
+            </button>
+          </div>
+
+          <div className="charts-container">
+            <div className="chart">
+              <h3 className="chart-title">{t.lineTitle}</h3>
+              <select 
+                value={selectedItem} 
+                onChange={(e) => setSelectedItem(e.target.value)}
+              >
+                {Object.keys(foodData.items).map(item => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
+              <canvas id="lineChart"></canvas>
+            </div>
+
+            <div className="chart">
+              <h3 className="chart-title">{t.barTitle}</h3>
+              <select 
+                value={selectedYear} 
+                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              >
+                {foodData.years.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
